@@ -23,13 +23,50 @@ describe Twoctwop::PaymentGateway::Payload do
   end
 
   describe '#payload' do
-    it 'returns an valid XML' do
-      expect(Nokogiri::XML(subject.payload).errors).to be_empty
+    let(:payload) { Twoctwop::PaymentGateway::Payload.new }
+    let(:parameters) do
+      {
+                      version:  "1.0",
+                   merchantId:  "999",
+        uniqueTransactionCode:  "abc123",
+                         desc:  "Awesome Product"
+      }
     end
 
-    it 'returns an XML with PaymentRequest as the top-level tag'
+    before do
+      allow(payload).to receive(:parameters).and_return(parameters)
+    end
 
-    it 'returns an XML string that contains all passed parameters'
+    subject do
+      Nokogiri::XML(payload.payload)
+    end
+
+    it 'returns an valid XML' do
+      expect(subject.errors).to be_empty
+    end
+
+    it 'returns an XML with PaymentRequest as the root node' do
+      # <PaymentRequest>
+      #   ...
+      # </PaymentRequest>
+      expect(subject.xpath("/PaymentRequest").length).to eq 1
+    end
+
+    it 'returns an XML string that contains all passed parameters' do
+      # <PaymentRequest>
+      #   <version>1.0</version>
+      #   <merchantId>999</merchantId>
+      #   <uniqueTransactionCode>abc123</uniqueTransactionCode>
+      #   <desc>Awesome Product</desc>
+      # </PaymentRequest>
+      parameters.each do |parameter, value|
+        expect(subject.at_xpath("/PaymentRequest/#{parameter}").text).to eq value
+      end
+    end
+
+    it 'returns an XML with "secureHash" as the last node' do
+      expect(subject.xpath("/PaymentRequest/*").last.name).to eq "secureHash"
+    end
   end
 
   describe '#generate' do

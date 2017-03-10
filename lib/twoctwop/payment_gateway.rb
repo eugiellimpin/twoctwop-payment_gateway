@@ -88,6 +88,12 @@ module Twoctwop
 
       def payload
         Builder::XmlMarkup.new.PaymentRequest do |xml|
+          parameters.each do |key, value|
+            xml.tag!(key, value)
+          end
+
+          # TODO: use correct hash value
+          xml.tag!('secureHash', "ABCD123")
         end
       end
 
