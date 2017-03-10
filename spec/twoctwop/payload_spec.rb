@@ -22,7 +22,7 @@ describe Twoctwop::PaymentGateway::Payload do
     it 'contains all required parameters'
   end
 
-  describe '#payload' do
+  describe '#xml_payload' do
     let(:payload) { Twoctwop::PaymentGateway::Payload.new }
     let(:parameters) do
       {
@@ -38,7 +38,7 @@ describe Twoctwop::PaymentGateway::Payload do
     end
 
     subject do
-      Nokogiri::XML(payload.payload)
+      Nokogiri::XML(payload.send(:xml_payload))
     end
 
     it 'returns an valid XML' do
@@ -71,7 +71,7 @@ describe Twoctwop::PaymentGateway::Payload do
 
   describe '#generate' do
     before do
-      allow(subject).to receive(:payload).and_return 'Test'
+      allow(subject).to receive(:xml_payload).and_return 'Test'
     end
 
     it 'returns a Base64 strictly encoded string' do

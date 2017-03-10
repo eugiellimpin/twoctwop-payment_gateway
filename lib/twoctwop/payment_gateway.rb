@@ -86,7 +86,13 @@ module Twoctwop
         }.reject { |_, v| v.nil? || v.strip.empty? }
       end
 
-      def payload
+      def generate
+        Base64.strict_encode64(xml_payload)
+      end
+
+      private
+
+      def xml_payload
         Builder::XmlMarkup.new.PaymentRequest do |xml|
           parameters.each do |key, value|
             xml.tag!(key, value)
@@ -97,9 +103,6 @@ module Twoctwop
         end
       end
 
-      def generate
-        Base64.strict_encode64(payload)
-      end
     end
   end
 end
