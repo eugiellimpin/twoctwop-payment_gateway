@@ -6,25 +6,33 @@ describe Twoctwop::PaymentGateway do
   end
 
   describe '#configure' do
-    subject { Twoctwop::PaymentGateway::Request.new }
+    subject { Twoctwop::PaymentGateway.configuration }
 
     describe 'merchant_id' do
       context 'configured' do
         before do
           Twoctwop::PaymentGateway.configure do |config|
-            config.merchant_id = 'merchant123'
+            config.merchant_id = 'merchant'
           end
         end
 
         it 'sets merchant_id' do
-          expect(subject.merchant_id).to eq 'merchant123'
+          expect(subject.merchant_id).to eq 'merchant'
+        end
+      end
+    end
+
+    describe 'secret_key' do
+      context 'configured' do
+        before do
+          Twoctwop::PaymentGateway.configure do |config|
+            config.secret_key = 'secret'
+          end
         end
 
-        it 'does not raise an error'
-      end
-
-      context 'not configured' do
-        it 'raises an error'
+        it 'sets secret_key' do
+          expect(subject.secret_key).to eq 'secret'
+        end
       end
     end
   end

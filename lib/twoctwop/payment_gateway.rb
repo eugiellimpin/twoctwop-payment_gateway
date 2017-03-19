@@ -23,7 +23,7 @@ module Twoctwop
     # - private key
     # - version
 
-      attr_accessor :merchant_id
+      attr_accessor :merchant_id, :secret_key
     end
 
     class Request
