@@ -103,6 +103,11 @@ module Twoctwop
         end
       end
 
+      def secure_hash
+        value = parameters.values.join
+        key = Twoctwop::PaymentGateway.configuration.secret_key
+        OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('SHA1'), key, value)
+      end
     end
   end
 end

@@ -78,4 +78,29 @@ describe Twoctwop::PaymentGateway::Payload do
       expect(Base64.strict_decode64(subject.generate)).to eq 'Test'
     end
   end
+
+  describe 'secure_hash' do
+    let(:parameters) do
+      {
+                      version:  "1.0",
+                   merchantId:  "999",
+        uniqueTransactionCode:  "abc123",
+                         desc:  "Awesome Product"
+      }
+    end
+    let(:digestible) { parameters.values.join }
+    let(:secret_key) { 'secret' }
+
+    before do
+      allow(subject).to receive(:parameters).and_return(parameters)
+      allow(Twoctwop::PaymentGateway.configuration).to receive(:secret_key).and_return(secret_key)
+      allow(OpenSSL::HMAC).to receive(:hexdigest)
+        .with(OpenSSL::Digest.new('SHA1'), secret_key, digestible)
+        .and_return('digested')
+    end
+
+    it 'digests the parameters' do
+      expect(subject.send(:secure_hash)).to eq('digested')
+    end
+  end
 end
