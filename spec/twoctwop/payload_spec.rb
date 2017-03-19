@@ -41,7 +41,7 @@ describe Twoctwop::PaymentGateway::Payload do
       Nokogiri::XML(payload.send(:xml_payload))
     end
 
-    it 'returns an valid XML' do
+    it 'returns a valid XML' do
       expect(subject.errors).to be_empty
     end
 
