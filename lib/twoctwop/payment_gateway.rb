@@ -8,7 +8,7 @@ module Twoctwop
     end
 
     def self.configuration
-      @configuraiton ||= Configuration.new
+      @configuration ||= Configuration.new
     end
 
     def self.configure
