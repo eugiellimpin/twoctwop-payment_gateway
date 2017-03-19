@@ -35,6 +35,7 @@ describe Twoctwop::PaymentGateway::Payload do
 
     before do
       allow(payload).to receive(:parameters).and_return(parameters)
+      allow(Twoctwop::PaymentGateway.configuration).to receive(:secret_key).and_return('secret')
     end
 
     subject do
@@ -66,6 +67,10 @@ describe Twoctwop::PaymentGateway::Payload do
 
     it 'returns an XML with "secureHash" as the last node' do
       expect(subject.xpath("/PaymentRequest/*").last.name).to eq "secureHash"
+    end
+
+    it 'embeds request parameters hashed value into secureHash node' do
+      expect(subject.xpath('/PaymentRequest/secureHash').text).to eq payload.send(:secure_hash)
     end
   end
 

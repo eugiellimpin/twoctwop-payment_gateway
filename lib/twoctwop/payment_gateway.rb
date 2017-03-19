@@ -98,8 +98,7 @@ module Twoctwop
             xml.tag!(key, value)
           end
 
-          # TODO: use correct hash value
-          xml.tag!('secureHash', "ABCD123")
+          xml.tag!('secureHash', secure_hash)
         end
       end
 
