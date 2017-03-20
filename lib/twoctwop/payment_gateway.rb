@@ -26,22 +26,35 @@ module Twoctwop
     end
 
     class Request
-    # - accept a payload
     # - create request steps
     # - execute request steps
     # - return Response
+      def initialize(parameters: {})
+        unless parameters.is_a? Hash
+          raise ArgumentError.new("Parameters must be a Hash!")
+        end
 
-      def merchant_id
-        Twoctwop::PaymentGateway.configuration.merchant_id
+        @parameters = parameters
+      end
+
+      def execute
+        Response.new
+      end
+
+      private
+
+      def steps
+        ['a']
       end
     end
 
     # RequestStep
     #
 
-    # Response
-    # - decrypts paymentResponse
-    # - transform XML paymentResponse to a Hash with snake case keys
+    class Response
+      # - decrypts paymentResponse
+      # - transform XML paymentResponse to a Hash with snake case keys
+    end
 
   end
 end
