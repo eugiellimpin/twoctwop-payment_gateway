@@ -68,9 +68,8 @@ module Twoctwop
 
       def parameters
         {
-          # TODO: get api_version and merchant_id from Configuration
-          version:                @api_version,
-          merchantID:             @merchant_id,
+          version:                Twoctwop::PaymentGateway.configuration.api_version,
+          merchantID:             Twoctwop::PaymentGateway.configuration.merchant_id,
           uniqueTransactionCode:  @unique_transaction_code,
           desc:                   @product_description,
           amt:                    @amount,
