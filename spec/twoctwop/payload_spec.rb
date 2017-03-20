@@ -10,6 +10,12 @@ describe Twoctwop::PaymentGateway::Payload do
   end
 
   describe '#parameters' do
+    before do
+      allow(Twoctwop::PaymentGateway.configuration).to receive(:api_version).and_return('1')
+      allow(Twoctwop::PaymentGateway.configuration).to receive(:merchant_id).and_return('2')
+      subject.instance_variable_set(:@unique_transaction_code, '')
+    end
+
     it 'returns a non-empty Hash'
 
     it 'returns a compact Hash' do
