@@ -48,9 +48,6 @@ module Twoctwop
       end
     end
 
-    # RequestStep
-    #
-
     class Response
       # - decrypts paymentResponse
       # - transform XML paymentResponse to a Hash with snake case keys
