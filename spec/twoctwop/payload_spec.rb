@@ -16,7 +16,9 @@ describe Twoctwop::PaymentGateway::Payload do
       subject.instance_variable_set(:@unique_transaction_code, '')
     end
 
-    it 'returns a non-empty Hash'
+    it 'returns a non-empty Hash' do
+      expect(subject.parameters).not_to be_empty
+    end
 
     it 'returns a compact Hash' do
       empty_values = subject.parameters.values.select do |v|
