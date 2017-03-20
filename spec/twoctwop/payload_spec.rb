@@ -26,8 +26,6 @@ describe Twoctwop::PaymentGateway::Payload do
       end
       expect(empty_values).to be_empty
     end
-
-    it 'contains all required parameters'
   end
 
   describe '#xml_payload' do

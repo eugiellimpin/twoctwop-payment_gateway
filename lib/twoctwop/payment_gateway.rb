@@ -45,24 +45,6 @@ module Twoctwop
     # - transform XML paymentResponse to a Hash with snake case keys
 
     class Payload
-    # - generate a hash(?)
-    # - generate XML payload
-    # - return Base64 encoded string of the payload
-      REQUIRED_PARAMETERS = %w[
-        version
-        merchantID
-        uniqueTransactionCode
-        desc
-        amt
-        currencyCode
-        paymentChannel
-        cardholderName
-        cardholderEmail
-        agentCode
-        channelCode
-        mobileNo
-      ].freeze
-
       def initialize(parameters={})
       end
 
