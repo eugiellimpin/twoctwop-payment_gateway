@@ -1,9 +1,14 @@
 require "nokogiri"
+require "httparty"
 
 module Twoctwop
   module PaymentGateway
     class RequestStep
       Error = Class.new(StandardError)
+
+      include HTTParty
+
+      @@cookie_jar = {}
 
       attr_reader :url, :payload, :payment_response
 
@@ -37,7 +42,27 @@ module Twoctwop
         self
       end
 
+      private
+
       def post
+        @response = self.class.post(@url, body: @payload, headers: { 'Cookie' => cookies })
+        store_cookies(@response.headers['Set-Cookie'])
+        @response
+      end
+
+      def cookies
+        @@cookie_jar.fetch(host, CookieHash.new).to_cookie_string
+      end
+
+      def store_cookies(new_cookies)
+        if new_cookies && !new_cookies.empty?
+          @@cookie_jar[host] ||= CookieHash.new
+          @@cookie_jar[host].add_cookies(new_cookies)
+        end
+      end
+
+      def host
+        @host ||= URI.parse(@url).host
       end
 
       def check_for_payment_response(response)

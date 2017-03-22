@@ -120,4 +120,98 @@ describe Twoctwop::PaymentGateway::RequestStep do
     end
   end
 
+  describe '#post' do
+    let(:cookies)  { { type: 'chocolate chip' } }
+    let(:headers)  { { 'Cookie' => 'type=chocolate chip' } }
+    let(:payload)  { { pay: 'load' } }
+    let(:step)     { Twoctwop::PaymentGateway::RequestStep.new(url: 'http://www.example.com/', payload: payload) }
+    let(:response) { double("Response", body: '<html/>', headers: { 'Set-Cookie' => { id: '1'} }) }
+
+    before do
+      step.send(:store_cookies, cookies)
+      # it uses stored cookies for step's @url
+      allow(Twoctwop::PaymentGateway::RequestStep).to receive(:post).with(anything, body: payload, headers: headers).and_return(response)
+    end
+
+    after(:each) do
+      Twoctwop::PaymentGateway::RequestStep.class_variable_set(:@@cookie_jar, {})
+    end
+
+    it "returns the request's response" do
+      expect(step.send(:post)).to eq response
+    end
+
+    it 'saves response cookies' do
+      expect(step).to receive(:store_cookies)
+      step.send(:post)
+    end
+  end
+
+  describe '#cookies' do
+    let(:step) { Twoctwop::PaymentGateway::RequestStep.new(url: 'http://www.example.com/foo/bar/1') }
+    let(:cookies) { HTTParty::CookieHash.new.add_cookies({ foo: 'foo' }) }
+    let(:other_cookies) { HTTParty::CookieHash.new.add_cookies({ bar: 'bar' }) }
+
+    after(:each) do
+      Twoctwop::PaymentGateway::RequestStep.class_variable_set(:@@cookie_jar, {})
+    end
+
+    context 'there are cookies for host' do
+      before do
+        Twoctwop::PaymentGateway::RequestStep.class_variable_set(:@@cookie_jar, {
+          'www.example.com' => cookies,
+          'www.other-example.com' => other_cookies
+        })
+      end
+
+      it 'returns the right cookies' do
+        expect(step.send(:cookies)).to eq cookies.to_cookie_string
+      end
+    end
+
+    context 'there are no cookies for host' do
+      before do
+        Twoctwop::PaymentGateway::RequestStep.class_variable_set(:@@cookie_jar, {
+          'www.other-example.com' => other_cookies
+        })
+      end
+
+      it 'returns an empty string' do
+        expect(step.send(:cookies)).to be_empty
+      end
+    end
+  end
+
+  describe '#store_cookies' do
+    let(:step) { Twoctwop::PaymentGateway::RequestStep.new(url: 'http://www.example.com/foo/bar/1') }
+    let(:host) { step.send(:host) }
+
+    after(:each) do
+      Twoctwop::PaymentGateway::RequestStep.class_variable_set(:@@cookie_jar, {})
+    end
+
+    context 'there are new cookies to store' do
+      let(:new_cookies) { { flavor: 'chocolate' } }
+
+      it 'adds the new cookies to the correct host' do
+        step.send(:store_cookies, new_cookies)
+        expect(Twoctwop::PaymentGateway::RequestStep.class_variable_get(:@@cookie_jar)[host].to_hash).to eq new_cookies
+      end
+    end
+
+    context 'there are no new cookies to store' do
+      it 'does nothing' do
+        step.send(:store_cookies, {})
+        expect(Twoctwop::PaymentGateway::RequestStep.class_variable_get(:@@cookie_jar)).to be_empty
+      end
+    end
+  end
+
+  describe '#host' do
+    subject { Twoctwop::PaymentGateway::RequestStep.new(url: 'http://www.example.com/foo/bar/1') }
+
+    it "returns the host part of the step's URL" do
+      expect(subject.send(:host)).to eq 'www.example.com'
+    end
+  end
 end
