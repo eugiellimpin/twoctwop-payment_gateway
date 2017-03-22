@@ -41,6 +41,13 @@ module Twoctwop
       end
 
       def check_for_payment_response(response)
+        html = Nokogiri::HTML(response.body)
+
+        unless (payment_response_el = html.css("#paymentResponse")).empty?
+          @payment_response = payment_response_el.first['value']
+        end
+
+        response
       end
     end
   end

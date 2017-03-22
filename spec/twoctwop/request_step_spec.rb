@@ -91,4 +91,33 @@ describe Twoctwop::PaymentGateway::RequestStep do
       end
     end
   end
+
+  describe '#check_for_payment_response' do
+    let(:response) { double("Response", body: '<html/>') }
+
+    subject { Twoctwop::PaymentGateway::RequestStep.new }
+
+    context 'when response contains payment response' do
+      let(:response) { double("Response", body: '<input id="paymentResponse" value="123" />') }
+
+      it 'assigns @payment_response' do
+        subject.send(:check_for_payment_response, response)
+        expect(subject.payment_response).to eq "123"
+      end
+    end
+
+    context 'when response does not contain payment response' do
+      let(:response) { double("Response", body: '<input id="fakeResponse" value="123" />') }
+
+      it 'does not assign @payment_response' do
+        subject.send(:check_for_payment_response, response)
+        expect(subject.payment_response).to be_nil
+      end
+    end
+
+    it 'returns the original response' do
+      expect(subject.send(:check_for_payment_response, response)).to eq response
+    end
+  end
+
 end
