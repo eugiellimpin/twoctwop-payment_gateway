@@ -4,6 +4,18 @@ module Twoctwop
   module PaymentGateway
     class Payload
       def initialize(parameters={})
+        @agent_code              = parameters[:agent_code]
+        @amount                  = parameters[:amount]
+        @channel_code            = parameters[:channel_code]
+        @currency_code           = parameters[:currency_code]
+        @payer_email             = parameters[:payer_email]
+        @payer_mobile_number     = parameters[:payer_mobile_number]
+        @payer_name              = parameters[:payer_name]
+        @payment_channel         = parameters[:payment_channel]
+        @product_description     = parameters[:product_description]
+        @unique_transaction_code = parameters[:unique_transaction_code]
+        @user_defined1           = parameters[:user_defined1]
+        @user_defined2           = parameters[:user_defined2]
       end
 
       def parameters
