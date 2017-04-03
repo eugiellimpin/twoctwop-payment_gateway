@@ -1,3 +1,6 @@
+require "twoctwop/payment_gateway/payload"
+require "twoctwop/payment_gateway/payment_request"
+require "twoctwop/payment_gateway/request_step"
 require "twoctwop/payment_gateway/version"
 
 module Twoctwop
