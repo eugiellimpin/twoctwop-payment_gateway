@@ -25,7 +25,7 @@ module Twoctwop
     # - private key
     # - version
 
-      attr_accessor :merchant_id, :secret_key
+      attr_accessor :api_version, :merchant_id, :secret_key
     end
 
     class Response
