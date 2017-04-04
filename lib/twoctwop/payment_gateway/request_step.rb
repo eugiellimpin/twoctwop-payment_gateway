@@ -42,6 +42,10 @@ module Twoctwop
         self
       end
 
+      def has_payment_response?
+        @payment_response.present?
+      end
+
       private
 
       def post
