@@ -10,8 +10,6 @@ module Twoctwop
         @payload = payload
       end
 
-      private
-
       def execute
         step = next_step
 
@@ -26,6 +24,8 @@ module Twoctwop
 
         step.try(:payment_response)
       end
+
+      private
 
       def next_step
         steps.shift
