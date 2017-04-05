@@ -34,8 +34,45 @@ module Twoctwop
     end
 
     class Response
-      # - decrypts paymentResponse
-      # - transform XML paymentResponse to a Hash with snake case keys
+      Error = Class.new(StandardError)
+
+      def initialize(payment_response='')
+        @payment_response = payment_response
+      end
+
+      def params
+        {}.tap do |params|
+          Hash.from_xml(payment_response)["PaymentResponse"].each do |key, value|
+            params[key.underscore] = value unless value.blank?
+          end
+        end
+      end
+
+      private
+
+      def payment_response
+        col = 64
+        encrypted = @payment_response.gsub(/(.{1,#{col}})( +|$\n?)|(.{1,#{col}})/, "\\1\\3\n")
+        encrypted = "-----BEGIN PKCS7-----\n" + encrypted + "-----END PKCS7-----"
+
+        OpenSSL::X509::Store.new.add_cert(public_key)
+        OpenSSL::PKCS7.new(encrypted).decrypt(private_key, public_key)
+      end
+
+      def public_key
+        public_key = Twoctwop::PaymentGateway.configuration.public_key
+        OpenSSL::X509::Certificate.new(public_key)
+      rescue OpenSSL::X509::CertificateError => e
+        raise Error.new("Could not create public key certificate")
+      end
+
+      def private_key
+        private_key = Twoctwop::PaymentGateway.configuration.private_key
+        passphrase = Twoctwop::PaymentGateway.configuration.passphrase
+        OpenSSL::PKey::RSA.new(private_key, passphrase)
+      rescue OpenSSL::PKey::RSAError => e
+        raise Error.new("Could not create private key")
+      end
     end
 
   end
