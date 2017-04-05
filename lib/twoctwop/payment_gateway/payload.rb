@@ -34,7 +34,7 @@ module Twoctwop
           agentCode:              @agent_code,
           channelCode:            @channel_code,
           mobileNo:               @payer_mobile_number
-        }.reject { |_, v| v.nil? || v.strip.empty? }
+        }.reject { |_, v| v.nil? || v.to_s.strip.empty? }
       end
 
       def generate
